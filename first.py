@@ -1,23 +1,31 @@
 #python
-from importlib.resources import path
 from typing import Optional
+from enum import Enum
 
 #pydantic
 from pydantic import BaseModel,Field #Field nos sirve para validar un modelo
 
+from pydantic import NameEmail #checar los mas importantes para validarlos
 #fastapi
 from fastapi import FastAPI,Body,Query,Path
 
 app = FastAPI()
 
 #Models
+class HairColor(Enum):
+    white = "white"
+    black = "black"
+
+
+
 class Person(BaseModel):
-    first_name:str = Field(...) 
+    first_name:str = Field(..., min_length=1, max_length= 40) 
     last_name:str
     hair:str
-    age:str
-    hair_color:Optional[str]=None #en base de datos es Null
-    is_married:Optional[bool]=None #en base de datos es Null
+    age:int = Field(...,ge=1,lt=115)
+    hair_color:Optional[HairColor]=Field(default=None) #en base de datos es Null
+    #is_married:Optional[bool]=None #en base de datos es Null y puede comprobarse con Field o solo
+    is_married:Optional[bool]=Field(default=None)
 
 class Location(BaseModel):
     latitude:int
