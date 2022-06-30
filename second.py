@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 # checar los mas importantes para validarlos
 from pydantic import NameEmail, EmailStr
 # fastapi
-from fastapi import FastAPI, Body, Query, Path
+from fastapi import FastAPI, Body, Query, Path,status
 
 # # importar los Models
 # from models import Person
@@ -33,11 +33,11 @@ class Person(PersonBase):
 
 # inicializar el objeto FastAPI en variable app para usar los path operators
 app = FastAPI()
-@app.get("/")
+@app.get(path="/",status_code=status.HTTP_200_OK)
 def home():
     return {1: 1}
 
 
-@app.post("/person",response_model=PersonBase)
+@app.post(path="/person",response_model=PersonBase,status_code=status.HTTP_201_CREATED)
 def create_person(person: Person = Body(...)):
     return person
