@@ -1,11 +1,12 @@
 #python
+from re import S
 from typing import Optional
 from enum import Enum
 
 #pydantic
 from pydantic import BaseModel,Field #Field nos sirve para validar un modelo
 
-from pydantic import NameEmail #checar los mas importantes para validarlos
+from pydantic import NameEmail,EmailStr #checar los mas importantes para validarlos
 #fastapi
 from fastapi import FastAPI,Body,Query,Path
 
@@ -19,17 +20,27 @@ class HairColor(Enum):
 
 
 class Person(BaseModel):
-    first_name:str = Field(..., min_length=1, max_length= 40) 
+    first_name:str = Field(..., min_length=1, max_length= 40, example = 'Brand')  #se puede o no poner la clase de abajo, pero tambien se puede poner aqu'i
     last_name:str
     hair:str
     age:int = Field(...,ge=1,lt=115)
     hair_color:Optional[HairColor]=Field(default=None) #en base de datos es Null
     #is_married:Optional[bool]=None #en base de datos es Null y puede comprobarse con Field o solo
     is_married:Optional[bool]=Field(default=None)
-
+        #clase para probar la documentacion, va dentro del modelo
+    # class Config:
+    #     schema_extra = {
+    #         "example": {
+    #             "first_name": "Rodrigo",
+    #             "last_name": "Lopez",
+    #             "age": 30,
+    #             "hair_color": "black",
+    #             "is_married": False
+    #         }
+    #     }
 class Location(BaseModel):
-    latitude:int
-    longitude:int
+    latitude:int = Field(ge=1,lt=115,example = 10)
+    longitude:int = Field(example = 10)
 
 @app.get("/")
 def home():
@@ -55,7 +66,7 @@ def show_person(
 #validar path parameters
 @app.get("/person/datails/{idperson}")
 def show_person(
-    idperson:int=Path(...,gt=0)
+    idperson:int=Path(...,gt=0, example= 1)
 ):
     return {idperson:'It exist'}
 
