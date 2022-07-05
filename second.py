@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from pydantic import NameEmail, EmailStr
 # fastapi
 from fastapi import Cookie, FastAPI, Body, Form, Header, Query, Path,UploadFile,File,status
-
+from fastapi import HTTPException
 # # importar los Models
 # from models import Person
 
