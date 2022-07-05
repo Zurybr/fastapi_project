@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 # checar los mas importantes para validarlos
 from pydantic import NameEmail, EmailStr
 # fastapi
-from fastapi import Cookie, FastAPI, Body, Form, Header, Query, Path,status
+from fastapi import Cookie, FastAPI, Body, Form, Header, Query, Path,UploadFile,File,status
 
 # # importar los Models
 # from models import Person
@@ -68,3 +68,18 @@ def contact(
 
 ):
     return user_agent
+
+
+#files
+
+@app.post(
+    path = '/post-image'
+)
+def post_image(
+    image:UploadFile = File(...)
+):
+    return{
+        'Filename': image.filename,
+        "Format":image.content_type,
+        "Size (kb)": round(len(image.file.read())/1024,ndigits=2)
+    }
