@@ -8,7 +8,7 @@ from pydantic import BaseModel,Field #Field nos sirve para validar un modelo
 
 from pydantic import NameEmail,EmailStr #checar los mas importantes para validarlos
 #fastapi
-from fastapi import FastAPI,Body,Query,Path
+from fastapi import FastAPI,Body,Query,Path,HTTPException,status
 
 app = FastAPI()
 
@@ -46,12 +46,26 @@ class Location(BaseModel):
 def home():
     return {1:1}
 
-@app.post("/person")
+@app.post("/person",
+tags=['Persons'],
+summary="Create Person in the app"
+)
 def create_person(person:Person = Body(...)):
+    """
+    Create Person
+
+    This path operation creates a person in the app and save the information in the database
+
+    Parameters: 
+    - Request body parameter: 
+        - **person: Person** -> A person model with first name, last name, age, hair color and marital stauts
+
+    Returns a person model with first name, last name, age, hair color and marital status
+    """
     return person
 
 #Validaciones Query Parameters
-@app.get("/person/details")
+@app.get("/person/details",tags=['Persons'],deprecated=True)
 def show_person(
     name:Optional[str]=Query(default=None,min_length=1,max_length=50
     ,title = "Person Name"
@@ -64,14 +78,20 @@ def show_person(
     return {name:age}
 
 #validar path parameters
-@app.get("/person/datails/{idperson}")
+persons = [1,2,3,4,5]
+@app.get("/person/datails/{idperson}",tags=['Persons'])
 def show_person(
     idperson:int=Path(...,gt=0, example= 1)
 ):
+    if idperson not in persons:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail ="This person doesn't exist"
+        )
     return {idperson:'It exist'}
 
 #validar body parameters
-@app.put("/person/{idPerson}")
+@app.put("/person/{idPerson}",tags=['Persons'])
 def update_person(
     idPerson:int = Path(...,description="id de la persona a actualizar",gt = 0),
     person:Person = Body(...),
